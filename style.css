@@ -228,3 +228,25 @@ section{padding:64px 0}
 .card{box-shadow:0 1px 2px rgba(10,26,51,.04),0 8px 24px -16px rgba(10,26,51,.18)}
 .tile{box-shadow:0 10px 24px -18px rgba(0,0,0,.5)}
 @media(max-width:899px){.grid .tile:last-child:nth-child(odd){grid-column:span 2}}
+
+/* comanda: date client + mesaj de mulțumire */
+.order label em{color:var(--orange-2);font-style:normal}
+.hint-sm{color:var(--muted);font-size:.92rem;margin-top:-4px}
+.err-txt{color:#C62828;font-size:.85rem;font-weight:600}
+.order input:invalid:focus{border-color:#C62828;box-shadow:0 0 0 4px rgba(198,40,40,.12)}
+.order-ok{max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--line);border-top:6px solid #22A55A;border-radius:var(--r);padding:40px 26px 32px;text-align:center;box-shadow:0 24px 50px -30px rgba(10,26,51,.45);animation:okIn .45s ease-out}
+.order-ok:focus{outline:none}
+.ok-ic{width:84px;height:84px;border-radius:50%;background:#22A55A;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 0 0 10px rgba(34,165,90,.15);animation:okPop .5s .1s ease-out both}
+.order-ok h3{font-size:clamp(1.6rem,4.5vw,2.1rem);color:var(--navy)}
+.ok-thanks{font-size:1.15rem;font-weight:600;color:#22A55A;margin-top:6px}
+.ok-sum{display:grid;gap:10px;text-align:left;background:var(--bg);border-radius:12px;padding:16px 18px;margin:22px 0 18px}
+.ok-sum div{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.ok-sum span{color:var(--muted)}
+.ok-sum b{text-align:right}
+.ok-next{color:var(--ink)}
+.ok-urgent{color:var(--muted);margin:10px 0 22px}
+.ok-urgent a{color:var(--blue);font-weight:700}
+@keyframes okIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes okPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.order-ok,.ok-ic{animation:none}}
+.order[hidden],.order-ok[hidden]{display:none}
