@@ -160,8 +160,36 @@ if(!b||!m)return;b.addEventListener("click",function(){{var o=m.classList.toggle
 m.addEventListener("click",function(e){{if(e.target.tagName==="A"){{m.classList.remove("open");b.setAttribute("aria-expanded","false")}}}});}})();
 </script>'''
 
+# ---------- date structurate (schema.org) ----------
+import json as _json, re as _ld_re
+def ld_tag(obj):
+    s = _json.dumps(obj, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return f'<script type="application/ld+json">{s}</script>\n'
+
+def breadcrumb_ld(path, body):
+    # Se construiește din firimiturile vizibile pe pagină, ca să spună același lucru.
+    m = _ld_re.search(r'<p class="crumbs">(.*?)</p>', body, _ld_re.S)
+    if not m or not C["domeniu"]: return ""
+    crumbs = m.group(1)
+    items = [(html.unescape(t).strip(), C["domeniu"] + "/" + ("" if h == "index.html" else h))
+             for h, t in _ld_re.findall(r'<a href="([^"]+)">(.*?)</a>', crumbs)]
+    last = _ld_re.sub(r"<[^>]+>", "", crumbs[crumbs.rfind("</a>") + 4:]).lstrip(" /›").strip()
+    items.append((html.unescape(last), C["domeniu"] + "/" + path))
+    return ld_tag({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i, "name": n, "item": u} for i, (n, u) in enumerate(items, 1)]})
+
+def site_ld(business):
+    business = {"@id": C["domeniu"] + "/#firma", "url": C["domeniu"] + "/", **business}
+    return ld_tag({"@context": "https://schema.org", "@graph": [business, {
+        "@type": "WebSite", "@id": C["domeniu"] + "/#site", "url": C["domeniu"] + "/",
+        "name": C["nume"], "inLanguage": "ro", "publisher": {"@id": C["domeniu"] + "/#firma"}}]})
+
 def page(title, desc, path, body):
     canon = C["domeniu"] + "/" + ("" if path == "index.html" else path)
+    ld = site_ld({"@type": "Organization", "name": C["nume"],
+                  "description": "Transport colete din România în Europa, de la ușă la ușă",
+                  "telephone": C["tel_link"], "email": C["email"],
+                  "areaServed": [{"@type": "Country", "name": "România"}, {"@type": "Place", "name": "Europa"}]}) if path == "index.html" else breadcrumb_ld(path, body)
     return f'''<!doctype html>
 <html lang="ro">
 <head>
@@ -170,7 +198,7 @@ def page(title, desc, path, body):
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{canon}">
-<meta name="theme-color" content="#0A1A33">
+{ld}<meta name="theme-color" content="#0A1A33">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
